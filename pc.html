@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>古本チェッカー</title>
+    <style>
+        .container {
+            width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>古本チェッカー</h1>
+        <h2>古本の値段をチェックします</h2>
+        <form action="" name="isbn" id="checkForm">
+            <input type="text" id="barcode">
+            <button>チェック</button>
+        </form>
+    </div>
+    <script>
+        var sites = [{
+                'name': 'ブックオフ',
+                'url': 'https://www.bookoffonline.co.jp/boleccontent/bolbuysearch/buysearch/search?bg=&q={barcode}'
+            },
+            {
+                'name': 'バリューブックス',
+                'url': 'https://www.valuebooks.jp/estimate/pricing/{isbn10}'
+            },
+            {
+                'name': '駿河屋',
+                'url': 'https://www.suruga-ya.jp/search_buy?category=&key_flag=2&searchbox=1&tab=2&search_word={isbn10}'
+            },
+            // {
+            //     'name': 'ドラゴンスター',
+            //     'url': 'https://dragongame.jp/list.php?word={barcode}'
+            // },
+        ];
+
+        function isbn13to10(isbn13) {
+            isbn13 += "";
+            var digits = [];
+            digits = isbn13.substr(3, 9).split("");
+            var sum = 0;
+            var chk_tmp, chk_digit;
+            for (var i = 0; i < 9; i++) {
+                sum += digits[i] * (10 - i);
+            }
+            chk_tmp = 11 - (sum % 11);
+            if (chk_tmp == 10) {
+                chk_digit = 'X';
+            } else if (chk_tmp == 11) {
+                chk_digit = 0;
+            } else {
+                chk_digit = chk_tmp;
+            }
+            digits.push(chk_digit);
+            return digits.join("");
+        }
+        document.addEventListener("DOMContentLoaded", function(event) {
+            document.getElementById('barcode').focus();
+        });
+        document.getElementById('checkForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var barcode = document.getElementById('barcode').value;
+            sites.map(function (site) {
+                var url = site.url.replace('{barcode}', barcode).replace('{isbn10}', isbn13to10(barcode));
+                window.open(url);
+                // var iframe = document.createElement('iframe');
+                // iframe.src = url;
+                // iframe.width = 300;
+                // iframe.width = 500;
+                // document.body.appendChild(iframe);
+            });
+            document.getElementById('barcode').value = '';
+        });
+    </script>
+</body>
+
+</html>
