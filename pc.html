@@ -69,15 +69,23 @@
         document.getElementById('checkForm').addEventListener('submit', function (e) {
             e.preventDefault();
             var barcode = document.getElementById('barcode').value;
+            var openedWindow;
+            var time = 0;
             sites.map(function (site) {
                 var url = site.url.replace('{barcode}', barcode).replace('{isbn10}', isbn13to10(barcode));
-                window.open(url);
+                setTimeout(function() {
+                    openedWindow = window.open(url, 'checker');
+                }, time);
+                time += 5000;
                 // var iframe = document.createElement('iframe');
                 // iframe.src = url;
                 // iframe.width = 300;
                 // iframe.width = 500;
                 // document.body.appendChild(iframe);
             });
+            setTimeout(function() {
+                openedWindow.close();
+            }, time);
             document.getElementById('barcode').value = '';
         });
     </script>
